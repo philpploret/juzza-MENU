@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JuZza · Menú</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== TOKENS: cielo nocturno y luz de luna ===== */
+  :root {
+    --fondo: #E4E0F2;        /* crepúsculo lavanda */
+    --cielo-2: #CFC8EA;
+    --superficie: rgba(255,255,255,0.55);
+    --tinta: #1C1840;        /* índigo profundo */
+    --tinta-suave: #4E4878;
+    --luna: #F3E7B3;         /* luz de luna */
+    --luna-sombra: #C9B978;
+    --acento: #7B5CD6;       /* violeta nebulosa */
+    --hoja-color: #3E7C47;   /* verde hoja */
+    --linea: rgba(28,24,64,0.18);
+    --apagado: #9A95B8;
+    --estrella: rgba(28,24,64,0.25);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fondo: #12102E; --cielo-2: #241D55; --superficie: rgba(255,255,255,0.05);
+      --tinta: #F7F5FF; --tinta-suave: #C6C0E8; --luna: #F3E7B3; --luna-sombra: #B8A65E;
+      --acento: #B39BFF; --hoja-color: #8FD98A; --linea: rgba(236,232,255,0.14); --apagado: #5D5784; --estrella: rgba(255,255,255,0.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --fondo: #12102E; --cielo-2: #241D55; --superficie: rgba(255,255,255,0.05);
+    --tinta: #F7F5FF; --tinta-suave: #C6C0E8; --luna: #F3E7B3; --luna-sombra: #B8A65E;
+    --acento: #B39BFF; --hoja-color: #8FD98A; --linea: rgba(236,232,255,0.14); --apagado: #5D5784; --estrella: rgba(255,255,255,0.7);
+  }
+
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  *, *::before, *::after { box-sizing: inherit; }
+
+  body {
+    margin: 0;
+    color: var(--tinta);
+    font-family: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 1rem;
+    line-height: 1.55;
+    background-color: var(--fondo);
+    /* estrellas: puntos repetidos en dos capas + degradado del cielo */
+    background-image:
+      radial-gradient(1px 1px at 20px 30px, var(--estrella) 50%, transparent 51%),
+      radial-gradient(1px 1px at 120px 80px, var(--estrella) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 70px 140px, var(--estrella) 50%, transparent 51%),
+      radial-gradient(1px 1px at 170px 190px, var(--estrella) 50%, transparent 51%),
+      linear-gradient(180deg, var(--cielo-2) 0%, var(--fondo) 38rem);
+    background-size: 200px 220px, 200px 220px, 200px 220px, 200px 220px, 100% 100%;
+    background-repeat: repeat, repeat, repeat, repeat, no-repeat;
+  }
+
+  .contenedor { max-width: 72rem; margin: 0 auto; padding: 0 1.25rem; }
+
+  /* ===== HERO: la luna ===== */
+  header.contenedor {
+    position: relative;
+    display: grid;
+    gap: 2rem;
+    padding: 3rem 1.25rem 3.5rem;
+    align-items: center;
+  }
+  @media (min-width: 760px) { header.contenedor { grid-template-columns: 1fr auto; } }
+  .marca {
+    font-family: "Syne", "Trebuchet MS", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--acento);
+    margin: 0 0 1.25rem;
+  }
+  h1 {
+    font-family: "Syne", "Trebuchet MS", sans-serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 10vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0;
+    max-width: 9ch;
+  }
+  .bajada { max-width: 40ch; color: var(--tinta-suave); font-size: 1.125rem; margin: 1.25rem 0 0; }
+
+  .luna {
+    justify-self: center;
+    width: clamp(13rem, 34vw, 22rem);
+    aspect-ratio: 220 / 135;
+    height: auto;
+    fill: var(--hoja-color);
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--hoja-color) 55%, transparent))
+            drop-shadow(0 0 60px rgba(179,155,255,0.35));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .luna { animation: salir 2.4s cubic-bezier(.2,.7,.2,1) both; }
+    @keyframes salir { from { opacity: 0; transform: translateY(40px) scale(.92); } to { opacity: 1; transform: none; } }
+  }
+
+  .mascota {
+    width: clamp(11rem, 26vw, 16rem);
+    aspect-ratio: 240 / 230;
+    overflow: visible;
+    /* efecto glitch: separación de canales rojo y cian */
+    filter: drop-shadow(-4px 0 0 rgba(255, 40, 110, 0.75))
+            drop-shadow(4px 0 0 rgba(40, 220, 255, 0.75))
+            drop-shadow(0 0 40px color-mix(in srgb, var(--acento) 50%, transparent));
+  }
+  .mascota .cuerpo { fill: url(#humo); }
+  .mascota .parpado { fill: #120F2B; }
+  .mascota .destello { fill: rgba(255,255,255,0.85); }
+  .mascota .sonrisa { fill: none; stroke: #120F2B; stroke-width: 4; stroke-linecap: round; }
+  @media (prefers-reduced-motion: no-preference) {
+    .mascota .cuerpo { animation: flotar 4s ease-in-out infinite; transform-origin: center; }
+    @keyframes flotar { 50% { transform: translateY(-6px); } }
+  }
+
+
+  /* ===== FONDO DE VASOS ===== */
+  .fondo-vasos { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .vaso {
+    position: absolute;
+    width: clamp(3.5rem, 8vw, 6rem);
+    aspect-ratio: 100 / 150;
+    height: auto;
+    opacity: 0.22;
+    transform: rotate(var(--giro));
+    filter: drop-shadow(-3px 0 0 rgba(255, 40, 110, 0.8)) drop-shadow(3px 0 0 rgba(40, 220, 255, 0.8));
+  }
+  header.contenedor, .controles, main, footer { position: relative; z-index: 1; }
+  .controles { z-index: 5; }
+
+  /* ===== GLITCH GENERAL ===== */
+  /* separación de canales rojo y cian en todo lo grande */
+  h1, .categoria h2, .info h3, .precio, .marca, .aviso-agotado {
+    text-shadow: -3px 0 rgba(255, 40, 110, 0.6), 3px 0 rgba(40, 220, 255, 0.6);
+  }
+  .bajada, .conteo, .resena, footer p {
+    text-shadow: -1.5px 0 rgba(255, 40, 110, 0.45), 1.5px 0 rgba(40, 220, 255, 0.45);
+  }
+  h1 { text-shadow: -4px 0 rgba(255, 40, 110, 0.6), 4px 0 rgba(40, 220, 255, 0.6); }
+  .hojita {
+    filter: drop-shadow(-2px 0 0 rgba(255, 40, 110, 0.7)) drop-shadow(2px 0 0 rgba(40, 220, 255, 0.7));
+  }
+  .chip[aria-pressed="true"], .foto.vacia {
+    box-shadow: -2px 0 0 rgba(255, 40, 110, 0.6), 2px 0 0 rgba(40, 220, 255, 0.6);
+  }
+  /* grano de foto vieja encima de todo */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0.16;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+    mix-blend-mode: overlay;
+  }
+  /* un brinco de glitch en el título cada pocos segundos */
+  @media (prefers-reduced-motion: no-preference) {
+    h1, .mascota, .chips, .categoria h2, .producto, footer p {
+      animation: brinco 5s steps(1) infinite;
+    }
+    /* duraciones y retrasos distintos para que no brinque todo al mismo tiempo */
+    .mascota { animation-duration: 6.2s; animation-delay: -2s; }
+    .chips { animation-duration: 8.4s; animation-delay: -5s; }
+    .categoria h2 { animation-duration: 7.1s; animation-delay: -1.5s; }
+    .categoria:nth-of-type(2n) h2 { animation-duration: 6.4s; animation-delay: -3.8s; }
+    .producto:nth-child(4n+1) { animation-duration: 6.8s; animation-delay: -0.7s; }
+    .producto:nth-child(4n+2) { animation-duration: 8.9s; animation-delay: -4.2s; }
+    .producto:nth-child(4n+3) { animation-duration: 7.6s; animation-delay: -2.9s; }
+    .producto:nth-child(4n)   { animation-duration: 9.7s; animation-delay: -6.1s; }
+    footer p { animation-duration: 10s; animation-delay: -3s; }
+    @keyframes brinco {
+      0%, 92%, 100% { transform: none; clip-path: none; }
+      93% { transform: translateX(-6px); clip-path: inset(0 0 55% 0); }
+      95% { transform: translateX(5px); clip-path: inset(40% 0 0 0); }
+      97% { transform: translateX(-2px); clip-path: none; }
+    }
+  }
+
+  /* ===== CONTROLES ===== */
+  .controles {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 5;
+    background: color-mix(in srgb, var(--fondo) 85%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--linea);
+    padding: 0.875rem 0;
+  }
+  .fila-controles { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+  .chips { display: flex; gap: 0.5rem; overflow-x: auto; flex: 1 1 100%; padding-bottom: 2px; }
+  .chip {
+    flex: none;
+    font: inherit;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--linea);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--tinta);
+    cursor: pointer;
+  }
+  .chip[aria-pressed="true"] { background: var(--luna); color: #1C1840; border-color: var(--luna); }
+  .buscador {
+    flex: 1 1 14rem;
+    font: inherit;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--linea);
+    border-radius: 999px;
+    background: var(--superficie);
+    color: var(--tinta);
+  }
+  .buscador::placeholder { color: var(--tinta-suave); }
+  .toggle { display: flex; align-items: center; gap: 0.5rem; color: var(--tinta-suave); font-size: 0.95rem; cursor: pointer; }
+  .toggle input { accent-color: var(--acento); width: 1.1rem; height: 1.1rem; }
+
+  :focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+
+  /* ===== SECCIONES Y PRODUCTOS ===== */
+  main { padding: 1rem 0 4rem; }
+  .categoria { margin-top: 3rem; }
+  .categoria h2 {
+    font-family: "Syne", "Trebuchet MS", sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    margin: 0;
+  }
+  .categoria .conteo { color: var(--tinta-suave); margin: 0.15rem 0 1rem; font-size: 0.95rem; }
+
+  .lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea); }
+
+  /* Arriba: hoja, nombre/reseñas y foto. Abajo: precios y botones para pedir.
+     En computadora los precios quedan junto a la foto; en celular usan todo el ancho. */
+  .producto {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "hoja info   foto"
+      ".    compra foto";
+    align-items: center;
+    gap: 0.6rem 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--linea);
+  }
+  .producto > .hojita { grid-area: hoja; }
+  .producto > .info { grid-area: info; }
+  .producto > .foto, .producto > .foto-boton { grid-area: foto; align-self: start; }
+  .producto > .compra { grid-area: compra; min-width: 0; max-width: 26rem; }
+  .compra:empty { display: none; }
+  @media (max-width: 600px) {
+    .producto {
+      grid-template-areas:
+        "hoja info   foto"
+        ".    compra compra";
+    }
+  }
+
+  .hojita {
+    width: 3.6rem;
+    aspect-ratio: 220 / 135;
+    height: auto;
+    fill: var(--hoja-color);
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--hoja-color) 45%, transparent));
+  }
+
+  .info { min-width: 0; }
+  .info h3 {
+    font-family: "Syne", "Trebuchet MS", sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .linea-datos { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 1rem; margin-top: 0.3rem; }
+  .resena { display: flex; align-items: baseline; gap: 0.35rem; margin: 0; font-size: 0.95rem; }
+  .resena .estrella { color: var(--tinta); font-size: 1rem; }
+  .resena strong { font-weight: 700; }
+  .resena .conteo-resenas { color: var(--tinta-suave); }
+  .sin-resenas { color: var(--tinta-suave); }
+
+  .precio {
+    font-family: "Syne", "Trebuchet MS", sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .foto {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 0.75rem;
+    object-fit: cover;
+    display: block;
+    background: var(--superficie);
+  }
+  @media (min-width: 760px) { .foto { width: 6.5rem; height: 6.5rem; } }
+  .foto.vacia {
+    display: grid;
+    place-content: center;
+    border: 1px dashed var(--linea);
+    color: var(--tinta-suave);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  /* Versiones (3.5 g, 7 g...) y precios por cantidad */
+  .variantes { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; }
+  .variante {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    column-gap: 0.5rem;
+    padding: 0.2rem 0;
+  }
+  .variante-dato { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.6rem; }
+  .variante-nombre { min-width: 0; font-weight: 600; color: var(--tinta-suave); }
+  .variante .precio { font-size: 1.1rem; }
+  .mayoreo { margin: 0.15rem 0 0; font-size: 0.85rem; color: var(--tinta-suave); }
+  .variante .mayoreo { grid-column: 1 / -1; margin: 0; }
+
+  /* Foto tocable y visor en grande */
+  .foto-boton {
+    display: block;
+    padding: 0;
+    border: none;
+    background: none;
+    border-radius: 0.75rem;
+    cursor: zoom-in;
+  }
+  .visor {
+    padding: 0;
+    border: none;
+    background: transparent;
+    max-width: min(92vw, 40rem);
+    max-height: none;
+    overflow: visible;
+  }
+  .visor::backdrop { background: rgba(10, 8, 30, 0.95); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .visor img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 75vh;
+    width: auto;
+    height: auto;
+    border-radius: 1rem;
+    background: rgba(255,255,255,0.06);
+  }
+  .visor-nombre {
+    margin: 0.75rem 0 0;
+    text-align: center;
+    color: #F7F5FF;
+    font-family: "Syne", "Trebuchet MS", sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+  .visor-cerrar {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+    right: 0.75rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+    color: #FFFFFF;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .visor[open] { animation: visor-entra 0.18s ease-out; }
+    @keyframes visor-entra { from { opacity: 0; transform: scale(0.96); } }
+  }
+
+  .aviso-agotado { font-weight: 700; font-size: 1rem; color: var(--acento); white-space: nowrap; }
+
+  /* ===== PEDIDO (carrito) ===== */
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .control-pedido { justify-self: end; }
+  .acciones-producto { display: flex; margin-top: 0.4rem; }
+  .acciones-producto .control-pedido { margin-left: 0; }
+  .btn-agregar {
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-height: 2.5rem;
+    padding: 0.35rem 1rem;
+    border: 1.5px solid var(--acento);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--acento);
+    cursor: pointer;
+  }
+  .contador {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background: var(--luna);
+    color: #1C1840;
+  }
+  .contador button {
+    font: inherit;
+    font-size: 1.25rem;
+    font-weight: 700;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  .contador span { min-width: 1.6rem; text-align: center; font-weight: 800; }
+  @media (max-width: 420px) {
+    .btn-agregar { padding: 0.35rem 0.8rem; }
+    .contador button { width: 2.3rem; height: 2.3rem; }
+  }
+
+  /* Barra fija con el resumen del pedido */
+  .barra-pedido {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
+    z-index: 20;
+    max-width: 30rem;
+    margin: 0 auto;
+  }
+  .barra-pedido[hidden] { display: none; }
+  .barra-pedido button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font: inherit;
+    font-weight: 700;
+    padding: 0.9rem 1.25rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--luna);
+    color: #1C1840;
+    box-shadow: 0 10px 30px rgba(10, 8, 30, 0.35);
+    cursor: pointer;
+  }
+  .barra-pedido .total { font-family: "Syne", "Trebuchet MS", sans-serif; font-weight: 800; font-size: 1.15rem; }
+  body.con-pedido footer { padding-bottom: 7rem; }
+
+  /* Hoja del pedido */
+  .pedido {
+    width: min(32rem, 100%);
+    max-height: 90dvh;
+    padding: 0;
+    border: 1px solid var(--linea);
+    border-radius: 1.25rem;
+    background: var(--fondo);
+    color: var(--tinta);
+  }
+  .pedido::backdrop { background: rgba(10, 8, 30, 0.7); }
+  @media (max-width: 600px) {
+    .pedido { margin: auto 0 0; max-width: 100%; width: 100%; border-radius: 1.25rem 1.25rem 0 0; border-bottom: none; }
+  }
+  .pedido-interior { padding: 1.25rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 1.5rem); }
+  .pedido-cabecera { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .pedido h2, .pedido h3 { font-family: "Syne", "Trebuchet MS", sans-serif; margin: 0; }
+  .pedido h2 { font-size: 1.5rem; }
+  .pedido h3 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; }
+  .pedido-cerrar {
+    width: 2.5rem; height: 2.5rem; border: none; border-radius: 50%;
+    background: var(--superficie); color: var(--tinta); font-size: 1.5rem; line-height: 1; cursor: pointer;
+  }
+  .pedido-lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea); }
+  .pedido-linea {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.25rem 1rem;
+    align-items: center;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--linea);
+  }
+  .pedido-linea .nombre-linea { font-weight: 700; }
+  .pedido-linea .unitario { color: var(--tinta-suave); font-size: 0.85rem; }
+  .pedido-linea .unitario .ahorro { color: var(--hoja-color); font-weight: 600; }
+  .pedido-linea .control-pedido { grid-column: 1 / -1; justify-self: start; }
+  .pedido-linea .subtotal { font-family: "Syne", "Trebuchet MS", sans-serif; font-weight: 800; text-align: right; }
+  .pedido-total { display: flex; justify-content: space-between; align-items: baseline; padding-top: 0.9rem; }
+  .pedido-total strong { font-family: "Syne", "Trebuchet MS", sans-serif; font-size: 1.6rem; }
+  .pedido-vaciar { font: inherit; font-size: 0.85rem; border: none; background: none; color: var(--tinta-suave); text-decoration: underline; padding: 0.5rem 0; cursor: pointer; }
+
+  .datos-pago { margin: 0; padding: 0.25rem 1rem; border: 1px solid var(--linea); border-radius: 1rem; background: var(--superficie); }
+  .dato-pago { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.1rem 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--linea); }
+  .dato-pago:last-child { border-bottom: none; }
+  .dato-pago dt { grid-column: 1; color: var(--tinta-suave); font-size: 0.8rem; }
+  .dato-pago dd { grid-column: 1; margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .dato-pago button { grid-column: 2; grid-row: 1 / span 2; }
+  .btn-copiar {
+    font: inherit; font-size: 0.85rem; font-weight: 600;
+    min-height: 2.25rem; padding: 0.3rem 0.9rem;
+    border: 1px solid var(--linea); border-radius: 999px;
+    background: transparent; color: var(--tinta); cursor: pointer;
+  }
+  .instrucciones { color: var(--tinta-suave); font-size: 0.9rem; margin: 0.75rem 0; }
+  .btn-resumen {
+    width: 100%; font: inherit; font-weight: 700; padding: 0.85rem 1rem; margin-top: 0.25rem;
+    border: none; border-radius: 999px; background: var(--luna); color: #1C1840; cursor: pointer;
+  }
+  .pendiente { padding: 0.9rem 1rem; border: 1px dashed var(--acento); border-radius: 1rem; color: var(--tinta-suave); }
+
+  .vacio { padding: 3rem 0; color: var(--tinta-suave); font-size: 1.1rem; }
+  .vacio button {
+    font: inherit; font-weight: 600; margin-top: 0.75rem; padding: 0.5rem 1.1rem;
+    border-radius: 999px; border: none; background: var(--luna); color: #1C1840; cursor: pointer;
+  }
+
+  footer {
+    border-top: 1px solid var(--linea);
+    padding: 2rem 0 3rem;
+    color: var(--tinta-suave);
+    font-size: 0.9rem;
+  }
+  footer p { margin: 0 0 0.5rem; max-width: 70ch; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="hoja" viewBox="-110 -105 220 135"><path d="M0.0,-0.0 L-1.6,-0.5 L-3.3,-1.0 L-4.9,-1.5 L-6.5,-2.1 L-8.1,-3.1 L-9.8,-3.1 L-11.4,-4.3 L-13.1,-4.0 L-14.7,-5.3 L-16.4,-4.8 L-18.0,-6.1 L-19.7,-5.4 L-21.3,-6.7 L-23.0,-5.8 L-24.6,-7.0 L-26.3,-6.0 L-27.9,-6.9 L-29.7,-5.9 L-31.3,-6.5 L-33.0,-5.4 L-34.7,-5.7 L-36.4,-4.5 L-38.2,-3.9 L-39.9,-2.8 L-39.9,-2.8 L-38.3,-1.5 L-36.7,-0.6 L-35.1,0.8 L-33.5,0.8 L-31.9,2.1 L-30.2,1.7 L-28.6,3.0 L-26.9,2.3 L-25.3,3.5 L-23.6,2.6 L-22.0,3.7 L-20.2,2.6 L-18.6,3.6 L-16.9,2.5 L-15.3,3.2 L-13.5,2.2 L-11.9,2.7 L-10.1,1.7 L-8.5,2.0 L-6.8,1.2 L-5.1,0.8 L-3.4,0.5 L-1.7,0.2 L-0.0,0.0Z M0.0,-0.0 L-2.0,-1.9 L-4.0,-4.0 L-5.9,-6.0 L-7.9,-8.1 L-9.4,-10.9 L-11.9,-12.1 L-13.3,-15.1 L-15.9,-16.0 L-17.3,-19.1 L-20.1,-19.7 L-21.4,-22.8 L-24.5,-23.1 L-25.8,-26.2 L-29.0,-26.3 L-30.4,-29.2 L-33.7,-29.1 L-35.3,-31.7 L-38.7,-31.5 L-40.5,-33.8 L-43.9,-33.5 L-46.1,-35.2 L-49.6,-34.8 L-52.6,-35.2 L-56.0,-35.0 L-56.0,-35.0 L-54.7,-31.8 L-53.0,-29.3 L-51.8,-26.0 L-49.3,-24.8 L-48.1,-21.6 L-45.3,-21.0 L-44.0,-17.8 L-40.9,-17.5 L-39.6,-14.5 L-36.3,-14.5 L-34.8,-11.7 L-31.5,-11.8 L-29.9,-9.2 L-26.5,-9.4 L-24.7,-7.1 L-21.4,-7.3 L-19.4,-5.3 L-16.1,-5.3 L-13.9,-3.7 L-10.8,-3.6 L-8.0,-2.7 L-5.3,-1.8 L-2.6,-1.0 L-0.0,0.0Z M0.0,-0.0 L-1.1,-3.6 L-2.1,-7.2 L-3.0,-10.9 L-4.0,-14.6 L-4.0,-18.8 L-6.0,-21.8 L-5.7,-26.2 L-8.2,-29.0 L-7.8,-33.4 L-10.7,-36.0 L-10.2,-40.4 L-13.6,-42.8 L-13.1,-47.2 L-16.8,-49.4 L-16.6,-53.7 L-20.5,-55.7 L-20.6,-59.8 L-24.7,-61.7 L-25.4,-65.6 L-29.6,-67.4 L-31.1,-70.8 L-35.3,-72.7 L-38.6,-75.0 L-42.7,-77.0 L-42.7,-77.0 L-43.2,-72.5 L-42.9,-68.4 L-43.6,-63.9 L-41.5,-60.8 L-42.1,-56.3 L-39.3,-53.7 L-39.8,-49.2 L-36.4,-46.9 L-36.8,-42.5 L-33.0,-40.4 L-33.1,-36.2 L-29.1,-34.2 L-28.9,-30.1 L-24.8,-28.2 L-24.2,-24.3 L-20.2,-22.3 L-19.2,-18.7 L-15.3,-16.6 L-13.8,-13.3 L-10.2,-11.1 L-7.6,-8.3 L-5.0,-5.6 L-2.4,-2.8 L-0.0,0.0Z M0.0,0.0 L0.9,-4.2 L1.9,-8.3 L3.0,-12.5 L4.1,-16.7 L6.4,-20.8 L6.1,-25.0 L8.7,-29.2 L7.8,-33.3 L10.7,-37.5 L9.2,-41.7 L12.1,-45.8 L10.1,-50.0 L13.0,-54.2 L10.5,-58.3 L13.1,-62.5 L10.3,-66.7 L12.5,-70.8 L9.4,-75.0 L10.9,-79.2 L7.7,-83.3 L8.1,-87.5 L5.0,-91.7 L3.0,-95.8 L0.0,-100.0 L0.0,-100.0 L-3.0,-95.8 L-5.0,-91.7 L-8.1,-87.5 L-7.7,-83.3 L-10.9,-79.2 L-9.4,-75.0 L-12.5,-70.8 L-10.3,-66.7 L-13.1,-62.5 L-10.5,-58.3 L-13.0,-54.2 L-10.1,-50.0 L-12.1,-45.8 L-9.2,-41.7 L-10.7,-37.5 L-7.8,-33.3 L-8.7,-29.2 L-6.1,-25.0 L-6.4,-20.8 L-4.1,-16.7 L-3.0,-12.5 L-1.9,-8.3 L-0.9,-4.2 L0.0,-0.0Z M0.0,0.0 L2.4,-2.8 L5.0,-5.6 L7.6,-8.3 L10.2,-11.1 L13.8,-13.3 L15.3,-16.6 L19.2,-18.7 L20.2,-22.3 L24.2,-24.3 L24.8,-28.2 L28.9,-30.1 L29.1,-34.2 L33.1,-36.2 L33.0,-40.4 L36.8,-42.5 L36.4,-46.9 L39.8,-49.2 L39.3,-53.7 L42.1,-56.3 L41.5,-60.8 L43.6,-63.9 L42.9,-68.4 L43.2,-72.5 L42.7,-77.0 L42.7,-77.0 L38.6,-75.0 L35.3,-72.7 L31.1,-70.8 L29.6,-67.4 L25.4,-65.6 L24.7,-61.7 L20.6,-59.8 L20.5,-55.7 L16.6,-53.7 L16.8,-49.4 L13.1,-47.2 L13.6,-42.8 L10.2,-40.4 L10.7,-36.0 L7.8,-33.4 L8.2,-29.0 L5.7,-26.2 L6.0,-21.8 L4.0,-18.8 L4.0,-14.6 L3.0,-10.9 L2.1,-7.2 L1.1,-3.6 L0.0,-0.0Z M0.0,0.0 L2.6,-1.0 L5.3,-1.8 L8.0,-2.7 L10.8,-3.6 L13.9,-3.7 L16.1,-5.3 L19.4,-5.3 L21.4,-7.3 L24.7,-7.1 L26.5,-9.4 L29.9,-9.2 L31.5,-11.8 L34.8,-11.7 L36.3,-14.5 L39.6,-14.5 L40.9,-17.5 L44.0,-17.8 L45.3,-21.0 L48.1,-21.6 L49.3,-24.8 L51.8,-26.0 L53.0,-29.3 L54.7,-31.8 L56.0,-35.0 L56.0,-35.0 L52.6,-35.2 L49.6,-34.8 L46.1,-35.2 L43.9,-33.5 L40.5,-33.8 L38.7,-31.5 L35.3,-31.7 L33.7,-29.1 L30.4,-29.2 L29.0,-26.3 L25.8,-26.2 L24.5,-23.1 L21.4,-22.8 L20.1,-19.7 L17.3,-19.1 L15.9,-16.0 L13.3,-15.1 L11.9,-12.1 L9.4,-10.9 L7.9,-8.1 L5.9,-6.0 L4.0,-4.0 L2.0,-1.9 L0.0,-0.0Z M0.0,0.0 L1.7,0.2 L3.4,0.5 L5.1,0.8 L6.8,1.2 L8.5,2.0 L10.1,1.7 L11.9,2.7 L13.5,2.2 L15.3,3.2 L16.9,2.5 L18.6,3.6 L20.2,2.6 L22.0,3.7 L23.6,2.6 L25.3,3.5 L26.9,2.3 L28.6,3.0 L30.2,1.7 L31.9,2.1 L33.5,0.8 L35.1,0.8 L36.7,-0.6 L38.3,-1.5 L39.9,-2.8 L39.9,-2.8 L38.2,-3.9 L36.4,-4.5 L34.7,-5.7 L33.0,-5.4 L31.3,-6.5 L29.7,-5.9 L27.9,-6.9 L26.3,-6.0 L24.6,-7.0 L23.0,-5.8 L21.3,-6.7 L19.7,-5.4 L18.0,-6.1 L16.4,-4.8 L14.7,-5.3 L13.1,-4.0 L11.4,-4.3 L9.8,-3.1 L8.1,-3.1 L6.5,-2.1 L4.9,-1.5 L3.3,-1.0 L1.6,-0.5 L0.0,-0.0Z M-2.2,0 L2.2,0 L1.6,28 L-1.6,28Z"/></symbol><symbol id="vaso" viewBox="0 0 100 150">
+    <path fill="#E7E3F3" d="M14,24 L86,24 L76,144 L24,144 Z"/>
+    <path fill="#CFC9E6" d="M14,24 L86,24 L85,36 L15,36 Z"/>
+    <path fill="#F7F5FC" d="M26,40 L34,40 L32,138 L27,138 Z" opacity=".8"/>
+    <ellipse cx="50" cy="24" rx="37" ry="7" fill="#F7F5FC"/>
+    <ellipse cx="50" cy="24" rx="31" ry="5" fill="#7B4FE0"/>
+    <path fill="#8E5CF0" d="M22,22 C20,34 24,46 21,58 C19,66 27,66 26,58 C25,48 29,36 30,26 Z"/>
+    <path fill="#8E5CF0" d="M62,26 C64,36 60,44 63,52 C65,58 70,56 69,50 C68,42 71,34 70,25 Z"/>
+    <path fill="#8E5CF0" d="M78,23 C80,30 79,36 81,40 C83,43 86,41 85,37 C84,32 86,27 85,22 Z"/>
+  </symbol></svg>
+
+<div class="fondo-vasos" aria-hidden="true">
+  <svg class="vaso" style="left:4%;top:6%;--giro:-18deg"><use href="#vaso"/></svg>
+  <svg class="vaso" style="left:70%;top:4%;--giro:22deg"><use href="#vaso"/></svg>
+  <svg class="vaso" style="left:88%;top:30%;--giro:-10deg"><use href="#vaso"/></svg>
+  <svg class="vaso" style="left:10%;top:38%;--giro:15deg"><use href="#vaso"/></svg>
+  <svg class="vaso" style="left:78%;top:58%;--giro:-25deg"><use href="#vaso"/></svg>
+  <svg class="vaso" style="left:2%;top:72%;--giro:20deg"><use href="#vaso"/></svg>
+  <svg class="vaso" style="left:44%;top:86%;--giro:-12deg"><use href="#vaso"/></svg>
+  <svg class="vaso" style="left:86%;top:88%;--giro:18deg"><use href="#vaso"/></svg>
+  <svg class="vaso" style="left:30%;top:18%;--giro:8deg"><use href="#vaso"/></svg>
+  <svg class="vaso" style="left:56%;top:46%;--giro:-30deg"><use href="#vaso"/></svg>
+</div>
+
+<header class="contenedor">
+  <div>
+    <p class="marca">JuZza</p>
+    <h1>Para las noches largas.</h1>
+    <p class="bajada">Aceites, gomitas, flor y tópicos de CBD con menos de 1% de THC. Revisa precios y reseñas de cada producto.</p>
+  </div>
+  <svg class="luna mascota" viewBox="0 0 240 230" aria-hidden="true">
+    <defs>
+      <linearGradient id="humo" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" style="stop-color: var(--hoja-color)"/>
+        <stop offset="1" style="stop-color: var(--acento)"/>
+      </linearGradient>
+    </defs>
+    <g class="cuerpo">
+      <path d="M52,152 C18,152 14,108 42,100 C30,68 62,42 88,54 C98,22 148,22 158,54 C184,38 220,64 204,96 C232,106 226,152 192,152 Z"/>
+      <path d="M78,150 Q98,182 80,212 Q118,188 116,150 Z"/>
+      <path d="M128,150 Q150,176 142,198 Q170,176 166,150 Z"/>
+    </g>
+    <path class="parpado" d="M78,104 A19,11 0 0 0 116,104 Z"/>
+    <path class="parpado" d="M128,104 A19,11 0 0 0 166,104 Z"/>
+    <circle class="destello" cx="104" cy="108" r="2.6"/>
+    <circle class="destello" cx="154" cy="108" r="2.6"/>
+    <path class="sonrisa" d="M104,128 Q118,140 136,126"/>
+  </svg>
+</header>
+
+<div class="controles">
+  <div class="contenedor fila-controles">
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por categoría"></div>
+    <input class="buscador" id="buscador" type="search" placeholder="Busca un producto" aria-label="Buscar productos">
+    <label class="toggle"><input type="checkbox" id="soloDisponibles"> Ocultar agotados</label>
+  </div>
+</div>
+
+<main class="contenedor" id="menu" aria-live="polite">
+  <p class="vacio">Cargando menú...</p>
+</main>
+
+<!-- Visor de fotos: se abre al tocar la foto de un producto -->
+<dialog class="visor" id="visor" aria-label="Foto del producto">
+  <button type="button" class="visor-cerrar" aria-label="Cerrar foto">×</button>
+  <img id="visorImg" alt="">
+  <p class="visor-nombre" id="visorNombre"></p>
+</dialog>
+
+<!-- Barra fija: aparece cuando hay algo en el pedido -->
+<div class="barra-pedido" id="barraPedido" hidden>
+  <button type="button" id="btnVerPedido">
+    <span id="barraTexto">Ver pedido</span>
+    <span class="total" id="barraTotal"></span>
+  </button>
+</div>
+
+<!-- Hoja del pedido con el método de pago -->
+<dialog class="pedido" id="pedido" aria-labelledby="tituloPedido">
+  <div class="pedido-interior">
+    <div class="pedido-cabecera">
+      <h2 id="tituloPedido">Tu pedido</h2>
+      <button type="button" class="pedido-cerrar" id="cerrarPedido" aria-label="Cerrar pedido">×</button>
+    </div>
+    <div id="contenidoPedido"></div>
+  </div>
+</dialog>
+
+<p class="sr-only" id="avisoPedido" aria-live="polite"></p>
+
+<footer class="contenedor">
+  <p>Productos derivados de cáñamo con menos de 1% de THC. No son medicamentos ni sustituyen tratamiento médico.</p>
+  <p>Venta solo a mayores de 18 años.</p>
+</footer>
+
+<script>
+/* =========================================================
+   DATOS DE PRUEBA
+   Cada producto = una fila de tu Google Sheet:
+   id | nombre | categoria | precio | variantes | calificacion | resenas | imagen | disponible | orden
+   "variantes" es un arreglo: [{ nombre: "3.5 g", precio: 380, escalones: [{ desde: 5, precio: 340 }] }]
+   Si no trae variantes, se usa "precio" como único precio.
+   ========================================================= */
+const DATOS_PRUEBA = {
+  categorias: [
+    { id: "aceites",    nombre: "Aceites",        orden: 1, visible: true },
+    { id: "gomitas",    nombre: "Gomitas",        orden: 2, visible: true },
+    { id: "flor",       nombre: "Flor de cáñamo", orden: 3, visible: true },
+    { id: "topicos",    nombre: "Tópicos",        orden: 4, visible: true },
+    { id: "accesorios", nombre: "Accesorios",     orden: 5, visible: true }
+  ],
+  productos: [
+    { id: "a1", nombre: "Aceite Espectro Completo 1000 mg", categoria: "aceites",    precio: 890,  calificacion: 4.8, resenas: 48,  imagen: "", disponible: true,  orden: 1 },
+    { id: "a2", nombre: "Aceite Isolado Menta 500 mg",      categoria: "aceites",    precio: 420,  calificacion: 4.5, resenas: 31,  imagen: "", disponible: true,  orden: 2 },
+    { id: "a3", nombre: "Aceite Noche Lavanda 1500 mg",     categoria: "aceites",    precio: 1150, calificacion: 4.9, resenas: 72,  imagen: "", disponible: false, orden: 3 },
+    { id: "g1", nombre: "Gomitas Mango Chile 10 pz",        categoria: "gomitas",    precio: 290,  calificacion: 4.7, resenas: 103, imagen: "", disponible: true,  orden: 1,
+      variantes: [{ nombre: "", precio: 290, escalones: [{ desde: 5, precio: 260 }, { desde: 10, precio: 240 }] }] },
+    { id: "g2", nombre: "Gomitas Frutos Rojos 10 pz",       categoria: "gomitas",    precio: 240,  calificacion: 4.3, resenas: 19,  imagen: "", disponible: true,  orden: 2 },
+    { id: "f1", nombre: "Lifter",                           categoria: "flor",       precio: 380,  calificacion: 4.6, resenas: 54,  imagen: "", disponible: true,  orden: 1,
+      variantes: [
+        { nombre: "3.5 g", precio: 380, escalones: [{ desde: 5, precio: 340 }] },
+        { nombre: "7 g",   precio: 700, escalones: [] },
+        { nombre: "14 g",  precio: 1300, escalones: [{ desde: 3, precio: 1200 }, { desde: 6, precio: 1100 }] }
+      ] },
+    { id: "f2", nombre: "Sour Space Candy",                 categoria: "flor",       precio: 420,  calificacion: 4.8, resenas: 61,  imagen: "", disponible: true,  orden: 2,
+      variantes: [{ nombre: "3.5 g", precio: 420, escalones: [] }, { nombre: "7 g", precio: 790, escalones: [] }] },
+    { id: "f3", nombre: "Elektra 3.5 g",                    categoria: "flor",       precio: 350,  calificacion: 4.2, resenas: 12,  imagen: "", disponible: false, orden: 3 },
+    { id: "t1", nombre: "Bálsamo de Árnica 50 g",           categoria: "topicos",    precio: 390,  calificacion: 4.9, resenas: 87,  imagen: "", disponible: true,  orden: 1 },
+    { id: "t2", nombre: "Crema Corporal 100 ml",            categoria: "topicos",    precio: 340,  calificacion: 4.4, resenas: 26,  imagen: "", disponible: true,  orden: 2 },
+    { id: "x1", nombre: "Grinder de Aluminio",              categoria: "accesorios", precio: 260,  calificacion: "",  resenas: 0,   imagen: "", disponible: true,  orden: 1 }
+  ]
+};
+
+/* Cuando tengas el endpoint, pones aquí la URL de tu web app */
+const URL_APPS_SCRIPT = "";
+/* =========================================================
+   DATOS DE PAGO (transferencia)
+   Llena los que apliquen; los que queden vacíos no se muestran.
+   ========================================================= */
+const DATOS_PAGO = {
+  banco: "",      // ej. "BBVA"
+  titular: "",    // nombre tal como aparece en la cuenta
+  clabe: "",      // 18 dígitos
+  cuenta: "",     // opcional: número de cuenta
+  tarjeta: "",    // opcional: 16 dígitos, para depósitos en tienda
+  instrucciones: "Haz tu transferencia por el total, copia el resumen de tu pedido y envíalo junto con tu comprobante."
+};
+
+
+// menu.json vive junto a este index.html en GitHub Pages; el Apps Script lo actualiza en cada cambio.
+// "no-cache" pregunta al servidor si cambió (respuesta rápida si no), así nunca se ve uno viejo.
+const URL_MENU_ESTATICO = "menu.json";
+
+async function cargarMenu() {
+  try {
+    const respuesta = await fetch(URL_MENU_ESTATICO, { cache: "no-cache" });
+    if (respuesta.ok) return await respuesta.json();
+  } catch (e) {
+    // Sin menu.json (o abierto desde el disco): seguimos con el respaldo
+  }
+  return URL_APPS_SCRIPT ? cargarDesdeAppsScript() : DATOS_PRUEBA;
+}
+
+async function cargarDesdeAppsScript() {
+  const respuesta = await fetch(URL_APPS_SCRIPT);
+  if (!respuesta.ok) throw new Error("No se pudo leer el menú: " + respuesta.status);
+  return respuesta.json(); // debe regresar { categorias: [...], productos: [...] }
+}
+
+/* =========================================================
+   LIMPIEZA: convierte lo que escribe el cliente en datos útiles
+   ========================================================= */
+
+// Acepta true, "TRUE", "sí", "1"... porque el cliente va a escribir de todo
+function esVerdadero(valor) {
+  return valor === true || /^(true|si|sí|1|x)$/i.test(String(valor).trim());
+}
+
+// "$1,150" o "1150" -> 1150
+function aNumero(valor) {
+  const n = Number(String(valor ?? "").replace(/[^\d.]/g, ""));
+  return String(valor ?? "").trim() === "" || Number.isNaN(n) ? null : n;
+}
+
+// La calificación siempre queda entre 1 y 5, o null si no hay
+function limpiarCalificacion(valor) {
+  const n = aNumero(valor);
+  if (n === null || n === 0) return null;
+  return Math.min(5, Math.max(1, n));
+}
+
+// Variantes limpias; si no hay ninguna válida, el producto queda con un solo precio
+function limpiarVariantes(lista, precioRespaldo) {
+  if (typeof lista === "string") {
+    try { lista = JSON.parse(lista); } catch (e) { lista = []; }
+  }
+
+  const variantes = (Array.isArray(lista) ? lista : [])
+    .map(v => {
+      v = v || {};
+      const precio = aNumero(v.precio);
+      const escalones = (Array.isArray(v.escalones) ? v.escalones : [])
+        .map(e => ({ desde: Math.round(aNumero(e && e.desde) || 0), precio: aNumero(e && e.precio) }))
+        .filter(e => e.desde >= 2 && e.precio !== null && precio !== null && e.precio < precio)
+        .sort((a, b) => a.desde - b.desde);
+      return { nombre: String(v.nombre ?? "").trim(), precio, escalones };
+    })
+    .filter(v => v.precio !== null && v.precio > 0);
+
+  if (variantes.length === 0 && precioRespaldo !== null && precioRespaldo > 0) {
+    return [{ nombre: "", precio: precioRespaldo, escalones: [] }];
+  }
+  return variantes;
+}
+
+// Fotos del repo: "img/x-400.webp" (menú) y "img/x-1200.webp" (visor).
+// Fotos viejas de Drive: se pide el tamaño con sz=w...
+function fotoChica(url) {
+  return url.replace(/sz=w\d+/, "sz=w300");
+}
+function fotoGrande(url) {
+  return url.replace(/sz=w\d+/, "sz=w1200").replace(/-400\.(webp|jpg)$/, "-1200.$1");
+}
+
+function normalizar(datos) {
+  const categorias = (datos.categorias || [])
+    .filter(c => c.id && esVerdadero(c.visible))
+    .map(c => ({ ...c, id: String(c.id).toLowerCase().trim() }))
+    .sort((a, b) => Number(a.orden) - Number(b.orden));
+
+  const productos = (datos.productos || [])
+    .filter(p => p.id && p.nombre)
+    .map(p => {
+      const variantes = limpiarVariantes(p.variantes, aNumero(p.precio));
+      return {
+        id: String(p.id),
+        nombre: String(p.nombre),
+        categoria: String(p.categoria).toLowerCase().trim(),
+        variantes: variantes,
+        precio: variantes.length ? Math.min(...variantes.map(v => v.precio)) : null,
+        calificacion: limpiarCalificacion(p.calificacion),
+        resenas: Math.max(0, Math.round(aNumero(p.resenas) || 0)),
+        imagen: fotoChica(String(p.imagen || "").trim()),
+        imagenGrande: fotoGrande(String(p.imagen || "").trim()),
+        disponible: esVerdadero(p.disponible),
+        orden: Number(p.orden) || 0
+      };
+    })
+    .filter(p => p.variantes.length > 0) // sin precio no se muestra
+    .sort((a, b) => a.orden - b.orden);
+
+  return { categorias, productos };
+}
+
+/* =========================================================
+   ESTADO Y RENDER
+   ========================================================= */
+const estado = { categoria: "todas", busqueda: "", soloDisponibles: false, datos: null };
+
+const formatoPrecio = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
+const formatoCalif = new Intl.NumberFormat("es-MX", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+function escapar(texto) {
+  const div = document.createElement("div");
+  div.textContent = texto ?? "";
+  return div.innerHTML;
+}
+
+function htmlResena(p) {
+  if (p.calificacion === null) return `<p class="resena sin-resenas">Sin reseñas</p>`;
+  const valor = formatoCalif.format(p.calificacion);
+  const texto = p.resenas === 1 ? "reseña" : "reseñas";
+  return `
+    <p class="resena" aria-label="${valor} de 5, ${p.resenas} ${texto}">
+      <span class="estrella" aria-hidden="true">★</span>
+      <strong aria-hidden="true">${valor}</strong>
+      <span class="conteo-resenas" aria-hidden="true">(${p.resenas})</span>
+    </p>`;
+}
+
+function htmlFoto(p) {
+  if (!p.imagen) return `<div class="foto vacia" aria-hidden="true">Sin foto</div>`;
+  return `
+    <button type="button" class="foto-boton" data-grande="${escapar(p.imagenGrande)}" data-nombre="${escapar(p.nombre)}"
+            aria-label="Ver foto de ${escapar(p.nombre)} en grande">
+      <img class="foto" src="${escapar(p.imagen)}" alt="${escapar(p.nombre)}" loading="lazy">
+    </button>`;
+}
+
+// "Por cantidad: 5+ pz a $340 c/u, 10+ pz a $300 c/u"
+function htmlEscalones(v) {
+  if (v.escalones.length === 0) return "";
+  const partes = v.escalones.map(e => `${e.desde}+ pz a ${formatoPrecio.format(e.precio)} c/u`);
+  return `<p class="mayoreo">Por cantidad: ${partes.join(", ")}</p>`;
+}
+
+function htmlVariante(p, v) {
+  return `
+    <li class="variante">
+      <span class="variante-dato">
+        <span class="variante-nombre">${escapar(v.nombre)}</span>
+        <span class="precio">${formatoPrecio.format(v.precio)}</span>
+      </span>
+      ${htmlControl(p, v)}
+      ${htmlEscalones(v)}
+    </li>`;
+}
+
+function htmlProducto(p) {
+  // Un solo precio sin nombre: se ve igual que antes. Varias versiones: una línea por versión.
+  const unSoloPrecio = p.variantes.length === 1 && !p.variantes[0].nombre;
+  let precios = "";
+  let detalle = "";
+
+  if (!p.disponible) {
+    precios = `<span class="aviso-agotado">Agotado</span>`;
+  } else if (unSoloPrecio) {
+    precios = `<span class="precio">${formatoPrecio.format(p.variantes[0].precio)}</span>`;
+    detalle = htmlEscalones(p.variantes[0]) +
+      `<div class="acciones-producto">${htmlControl(p, p.variantes[0])}</div>`;
+  } else {
+    detalle = `<ul class="variantes">${p.variantes.map(v => htmlVariante(p, v)).join("")}</ul>`;
+  }
+
+  return `
+    <li class="producto ${p.disponible ? "" : "agotado"}">
+      <svg class="hojita" aria-hidden="true"><use href="#hoja"/></svg>
+      <div class="info">
+        <h3>${escapar(p.nombre)}</h3>
+        <div class="linea-datos">${precios}${htmlResena(p)}</div>
+      </div>
+      ${htmlFoto(p)}
+      <div class="compra">${detalle}</div>
+    </li>`;
+}
+
+function render() {
+  const { categorias, productos } = estado.datos;
+  const q = estado.busqueda.trim().toLowerCase();
+
+  const visibles = productos.filter(p =>
+    (estado.categoria === "todas" || p.categoria === estado.categoria) &&
+    (!estado.soloDisponibles || p.disponible) &&
+    (!q || p.nombre.toLowerCase().includes(q))
+  );
+
+  // Una sección por categoría; las que quedan vacías no se pintan
+  const secciones = categorias.map(c => {
+    const suyos = visibles.filter(p => p.categoria === c.id);
+    if (suyos.length === 0) return "";
+    return `
+      <section class="categoria" aria-labelledby="cat-${c.id}">
+        <h2 id="cat-${c.id}">${escapar(c.nombre)}</h2>
+        <p class="conteo">${suyos.length} ${suyos.length === 1 ? "producto" : "productos"}</p>
+        <ul class="lista">${suyos.map(htmlProducto).join("")}</ul>
+      </section>`;
+  }).join("");
+
+  document.getElementById("menu").innerHTML = secciones || `
+    <div class="vacio">
+      <p>Ningún producto coincide con tu búsqueda.</p>
+      <button type="button" id="limpiar">Quitar filtros</button>
+    </div>`;
+}
+
+function renderChips() {
+  const chips = document.getElementById("chips");
+  const todas = [{ id: "todas", nombre: "Todo" }, ...estado.datos.categorias];
+  chips.innerHTML = todas.map(c =>
+    `<button type="button" class="chip" data-cat="${c.id}" aria-pressed="${estado.categoria === c.id}">${escapar(c.nombre)}</button>`
+  ).join("");
+}
+
+/* =========================================================
+   EVENTOS (delegados: un solo listener aunque cambie el HTML)
+   ========================================================= */
+document.getElementById("chips").addEventListener("click", e => {
+  const boton = e.target.closest(".chip");
+  if (!boton) return;
+  estado.categoria = boton.dataset.cat;
+  renderChips();
+  render();
+});
+
+document.getElementById("buscador").addEventListener("input", e => {
+  estado.busqueda = e.target.value;
+  render();
+});
+
+document.getElementById("soloDisponibles").addEventListener("change", e => {
+  estado.soloDisponibles = e.target.checked;
+  render();
+});
+
+document.getElementById("menu").addEventListener("click", e => {
+  if (e.target.id !== "limpiar") return;
+  estado.categoria = "todas";
+  estado.busqueda = "";
+  estado.soloDisponibles = false;
+  document.getElementById("buscador").value = "";
+  document.getElementById("soloDisponibles").checked = false;
+  renderChips();
+  render();
+});
+
+// Si la URL de una imagen está rota, se muestra el recuadro "Sin foto"
+document.getElementById("menu").addEventListener("error", e => {
+  if (e.target.tagName !== "IMG") return;
+  const vacia = document.createElement("div");
+  vacia.className = "foto vacia";
+  vacia.setAttribute("aria-hidden", "true");
+  vacia.textContent = "Sin foto";
+  (e.target.closest(".foto-boton") || e.target).replaceWith(vacia);
+}, true);
+
+/* =========================================================
+   VISOR DE FOTOS
+   ========================================================= */
+const visor = document.getElementById("visor");
+const visorImg = document.getElementById("visorImg");
+
+function abrirVisor(boton) {
+  const chica = boton.querySelector("img").currentSrc || boton.querySelector("img").src;
+  const grande = boton.dataset.grande;
+  const nombre = boton.dataset.nombre;
+
+  // Se muestra al instante la foto chica (ya descargada) y se cambia por la grande cuando llegue
+  visorImg.src = chica;
+  visorImg.alt = nombre;
+  visorImg.dataset.esperando = grande;
+  document.getElementById("visorNombre").textContent = nombre;
+  visor.showModal();
+
+  if (grande && grande !== chica) {
+    const previa = new Image();
+    previa.onload = () => {
+      // Solo si el visor sigue abierto con ESTA foto (por si abrieron otra mientras cargaba)
+      if (visor.open && visorImg.dataset.esperando === grande) visorImg.src = grande;
+    };
+    previa.src = grande;
+  }
+}
+
+document.getElementById("menu").addEventListener("click", e => {
+  const boton = e.target.closest(".foto-boton");
+  if (boton) abrirVisor(boton);
+});
+
+// Tocar en cualquier parte (foto, fondo o la X) cierra el visor; Esc también funciona
+visor.addEventListener("click", () => visor.close());
+
+/* =========================================================
+   PEDIDO (carrito)
+   Se guarda en este navegador: clave "idProducto|versión" -> cantidad.
+   Los precios NO se guardan: se calculan siempre con el menú actual.
+   ========================================================= */
+const CLAVE_PEDIDO = "pedido-v1";
+const MAX_CANTIDAD = 99;
+const pedido = new Map();
+
+try {
+  const guardado = JSON.parse(localStorage.getItem(CLAVE_PEDIDO) || "[]");
+  guardado.forEach(([clave, cantidad]) => {
+    if (typeof clave === "string" && cantidad > 0) pedido.set(clave, Math.min(MAX_CANTIDAD, Math.round(cantidad)));
+  });
+} catch (e) {}
+
+function guardarPedido() {
+  try { localStorage.setItem(CLAVE_PEDIDO, JSON.stringify([...pedido])); } catch (e) {}
+}
+
+function claveDe(p, v) {
+  return p.id + "|" + v.nombre;
+}
+
+function nombreLinea(p, v) {
+  return v.nombre ? p.nombre + " " + v.nombre : p.nombre;
+}
+
+// Precio por pieza según la cantidad (aplica los precios por cantidad)
+function precioUnitario(v, cantidad) {
+  let precio = v.precio;
+  v.escalones.forEach(e => {
+    if (cantidad >= e.desde) precio = Math.min(precio, e.precio);
+  });
+  return precio;
+}
+
+// Líneas válidas del pedido con sus precios. Quita lo que ya no existe o se agotó.
+function lineasPedido() {
+  if (!estado.datos) return [];
+  const lineas = [];
+  let cambio = false;
+
+  pedido.forEach((cantidad, clave) => {
+    const corte = clave.indexOf("|");
+    const id = clave.slice(0, corte);
+    const nombreVariante = clave.slice(corte + 1);
+    const p = estado.datos.productos.find(x => x.id === id);
+    const v = p && p.variantes.find(x => x.nombre === nombreVariante);
+
+    if (!p || !v || !p.disponible) {
+      pedido.delete(clave);
+      cambio = true;
+      return;
+    }
+    const unitario = precioUnitario(v, cantidad);
+    lineas.push({ clave, p, v, cantidad, unitario, subtotal: unitario * cantidad });
+  });
+
+  if (cambio) guardarPedido();
+  return lineas;
+}
+
+function interiorControl(cantidad, nombre) {
+  const n = escapar(nombre);
+  if (cantidad === 0) {
+    return `<button type="button" class="btn-agregar" data-accion="mas" aria-label="Agregar ${n} al pedido">Agregar</button>`;
+  }
+  return `
+    <div class="contador">
+      <button type="button" data-accion="menos" aria-label="Quitar uno de ${n}">−</button>
+      <span>${cantidad}</span>
+      <button type="button" data-accion="mas" aria-label="Agregar otro ${n}">+</button>
+    </div>`;
+}
+
+function htmlControl(p, v) {
+  const clave = claveDe(p, v);
+  const nombre = nombreLinea(p, v);
+  return `<div class="control-pedido" data-clave="${escapar(clave)}" data-nombre="${escapar(nombre)}">${interiorControl(pedido.get(clave) || 0, nombre)}</div>`;
+}
+
+function cambiarCantidad(clave, delta) {
+  const actual = pedido.get(clave) || 0;
+  const nueva = Math.max(0, Math.min(MAX_CANTIDAD, actual + delta));
+  if (nueva === actual) return;
+
+  if (nueva === 0) pedido.delete(clave);
+  else pedido.set(clave, nueva);
+  guardarPedido();
+
+  // Solo se actualizan los controles de esa línea (no se repinta todo el menú)
+  document.querySelectorAll(`.control-pedido[data-clave="${CSS.escape(clave)}"]`).forEach(control => {
+    control.innerHTML = interiorControl(nueva, control.dataset.nombre);
+  });
+
+  const control = document.querySelector(`.control-pedido[data-clave="${CSS.escape(clave)}"]`);
+  const nombre = control ? control.dataset.nombre : "Producto";
+  document.getElementById("avisoPedido").textContent =
+    nueva === 0 ? nombre + " se quitó del pedido" : nombre + ": " + nueva + " en el pedido";
+
+  actualizarBarra();
+  if (document.getElementById("pedido").open) pintarPedido();
+}
+
+function actualizarBarra() {
+  const lineas = lineasPedido();
+  const piezas = lineas.reduce((suma, l) => suma + l.cantidad, 0);
+  const total = lineas.reduce((suma, l) => suma + l.subtotal, 0);
+
+  document.getElementById("barraPedido").hidden = piezas === 0;
+  document.body.classList.toggle("con-pedido", piezas > 0);
+  document.getElementById("barraTexto").textContent =
+    "Ver pedido (" + piezas + (piezas === 1 ? " pieza)" : " piezas)");
+  document.getElementById("barraTotal").textContent = formatoPrecio.format(total);
+}
+
+function textoResumen(lineas, total) {
+  const renglones = lineas.map(l =>
+    `${l.cantidad} x ${nombreLinea(l.p, l.v)} (${formatoPrecio.format(l.unitario)} c/u) = ${formatoPrecio.format(l.subtotal)}`
+  );
+  return ["Pedido JuZza", ...renglones, "Total: " + formatoPrecio.format(total)].join("\n");
+}
+
+// CLABE y tarjeta se muestran en bloques de 4 para leerlas fácil; se copian sin espacios
+function enBloques(numero) {
+  return String(numero).replace(/\s+/g, "").replace(/(.{4})(?=.)/g, "$1 ");
+}
+
+function htmlDatosPago() {
+  const filas = [
+    ["Banco", DATOS_PAGO.banco, false],
+    ["Titular", DATOS_PAGO.titular, true],
+    ["CLABE", DATOS_PAGO.clabe, true],
+    ["Cuenta", DATOS_PAGO.cuenta, true],
+    ["Tarjeta", DATOS_PAGO.tarjeta, true]
+  ].filter(([, valor]) => String(valor || "").trim() !== "");
+
+  if (filas.length === 0) {
+    return `<p class="pendiente">Los datos para transferencia todavía no están configurados.</p>`;
+  }
+
+  return `
+    <dl class="datos-pago">
+      ${filas.map(([etiqueta, valor, copiable]) => {
+        const limpio = String(valor).trim();
+        const numerico = /^[\d\s]+$/.test(limpio);
+        const mostrar = numerico ? enBloques(limpio) : limpio;
+        const copiar = numerico ? limpio.replace(/\s+/g, "") : limpio;
+        return `
+          <div class="dato-pago">
+            <dt>${etiqueta}</dt>
+            <dd>${escapar(mostrar)}</dd>
+            ${copiable ? `<button type="button" class="btn-copiar" data-copiar="${escapar(copiar)}" aria-label="Copiar ${etiqueta}">Copiar</button>` : ""}
+          </div>`;
+      }).join("")}
+    </dl>`;
+}
+
+function pintarPedido() {
+  const contenedor = document.getElementById("contenidoPedido");
+  const lineas = lineasPedido();
+
+  if (lineas.length === 0) {
+    contenedor.innerHTML = `<p class="instrucciones">Tu pedido está vacío. Toca "Agregar" en los productos que quieras.</p>`;
+    return;
+  }
+
+  const total = lineas.reduce((suma, l) => suma + l.subtotal, 0);
+
+  contenedor.innerHTML = `
+    <ul class="pedido-lista">
+      ${lineas.map(l => {
+        const conDescuento = l.unitario < l.v.precio;
+        return `
+          <li class="pedido-linea">
+            <div>
+              <div class="nombre-linea">${escapar(nombreLinea(l.p, l.v))}</div>
+              <div class="unitario">
+                ${formatoPrecio.format(l.unitario)} c/u
+                ${conDescuento ? `<span class="ahorro">precio por cantidad</span>` : ""}
+              </div>
+            </div>
+            <div class="subtotal">${formatoPrecio.format(l.subtotal)}</div>
+            ${htmlControl(l.p, l.v)}
+          </li>`;
+      }).join("")}
+    </ul>
+    <div class="pedido-total"><span>Total</span><strong>${formatoPrecio.format(total)}</strong></div>
+    <button type="button" class="pedido-vaciar" id="vaciarPedido">Vaciar pedido</button>
+
+    <h3>Método de pago: transferencia</h3>
+    ${htmlDatosPago()}
+    <p class="instrucciones">${escapar(DATOS_PAGO.instrucciones || "")}</p>
+    <button type="button" class="btn-resumen" data-copiar="${escapar(textoResumen(lineas, total))}">Copiar resumen del pedido</button>`;
+}
+
+// Copia al portapapeles y avisa en el mismo botón
+async function copiar(texto, boton) {
+  const original = boton.textContent;
+  try {
+    await navigator.clipboard.writeText(texto);
+    boton.textContent = "Copiado";
+  } catch (e) {
+    // Respaldo para navegadores que no dejan usar el portapapeles
+    const area = document.createElement("textarea");
+    area.value = texto;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.append(area);
+    area.select();
+    const ok = document.execCommand("copy");
+    area.remove();
+    boton.textContent = ok ? "Copiado" : "No se pudo copiar";
+  }
+  setTimeout(() => { boton.textContent = original; }, 1600);
+}
+
+// + / − y "Agregar", tanto en el menú como dentro del pedido
+function alTocarControl(e) {
+  const boton = e.target.closest("[data-accion]");
+  if (!boton) return;
+  const control = boton.closest(".control-pedido");
+  if (!control) return;
+  cambiarCantidad(control.dataset.clave, boton.dataset.accion === "mas" ? 1 : -1);
+}
+
+document.getElementById("menu").addEventListener("click", alTocarControl);
+
+const dialogoPedido = document.getElementById("pedido");
+dialogoPedido.addEventListener("click", e => {
+  if (e.target === dialogoPedido) { dialogoPedido.close(); return; }   // tocar fuera de la hoja
+  const copiable = e.target.closest("[data-copiar]");
+  if (copiable) { copiar(copiable.dataset.copiar, copiable); return; }
+  if (e.target.id === "vaciarPedido") {
+    if (confirm("¿Vaciar todo el pedido?")) {
+      pedido.clear();
+      guardarPedido();
+      render();
+      actualizarBarra();
+      pintarPedido();
+    }
+    return;
+  }
+  alTocarControl(e);
+});
+
+document.getElementById("cerrarPedido").addEventListener("click", () => dialogoPedido.close());
+document.getElementById("btnVerPedido").addEventListener("click", () => {
+  pintarPedido();
+  dialogoPedido.showModal();
+});
+
+/* =========================================================
+   ARRANQUE
+   ========================================================= */
+const CLAVE_CACHE = "menu-cache-v1";
+
+async function iniciar() {
+  let yaSePinto = false;
+
+  // 1. Si hay una copia guardada de la visita anterior, se pinta al instante
+  try {
+    const guardado = localStorage.getItem(CLAVE_CACHE);
+    if (guardado) {
+      estado.datos = normalizar(JSON.parse(guardado));
+      renderChips();
+      render();
+      actualizarBarra();
+      yaSePinto = true;
+    }
+  } catch (e) {
+    // Si el navegador no deja usar localStorage, seguimos normal
+  }
+
+  // 2. Se piden los datos frescos y se actualiza la pantalla
+  try {
+    const crudos = await cargarMenu();
+    estado.datos = normalizar(crudos);
+    try { localStorage.setItem(CLAVE_CACHE, JSON.stringify(crudos)); } catch (e) {}
+    renderChips();
+    render();
+    actualizarBarra();
+  } catch (error) {
+    console.error(error);
+    if (!yaSePinto) {
+      document.getElementById("menu").innerHTML =
+        `<div class="vacio"><p>El menú no cargó. Revisa tu conexión y recarga la página.</p></div>`;
+    }
+  }
+}
+
+iniciar();
+</script>
+</body>
+</html>

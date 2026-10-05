@@ -301,11 +301,18 @@
 
   /* Versiones (3.5 g, 7 g...) y precios por cantidad */
   .variantes { list-style: none; margin: 0.4rem 0 0; padding: 0; display: grid; gap: 0.3rem; }
-  .variante { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.75rem; }
-  .variante-nombre { min-width: 3.5rem; font-weight: 600; color: var(--tinta-suave); }
+  .variante {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    column-gap: 0.5rem;
+    padding: 0.2rem 0;
+  }
+  .variante-dato { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.6rem; }
+  .variante-nombre { min-width: 0; font-weight: 600; color: var(--tinta-suave); }
   .variante .precio { font-size: 1.1rem; }
   .mayoreo { margin: 0.15rem 0 0; font-size: 0.85rem; color: var(--tinta-suave); }
-  .variante .mayoreo { flex-basis: 100%; margin: 0; }
+  .variante .mayoreo { grid-column: 1 / -1; margin: 0; }
 
   /* Foto tocable y visor en grande */
   .foto-boton {
@@ -363,6 +370,138 @@
   }
 
   .aviso-agotado { font-weight: 700; font-size: 1rem; color: var(--acento); white-space: nowrap; }
+
+  /* ===== PEDIDO (carrito) ===== */
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .control-pedido { justify-self: end; }
+  .acciones-producto { display: flex; margin-top: 0.5rem; }
+  .acciones-producto .control-pedido { margin-left: 0; }
+  .btn-agregar {
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-height: 2.5rem;
+    padding: 0.35rem 1rem;
+    border: 1.5px solid var(--acento);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--acento);
+    cursor: pointer;
+  }
+  .contador {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background: var(--luna);
+    color: #1C1840;
+  }
+  .contador button {
+    font: inherit;
+    font-size: 1.25rem;
+    font-weight: 700;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  .contador span { min-width: 1.6rem; text-align: center; font-weight: 800; }
+  @media (max-width: 420px) {
+    .btn-agregar { padding: 0.35rem 0.8rem; }
+    .contador button { width: 2.3rem; height: 2.3rem; }
+  }
+
+  /* Barra fija con el resumen del pedido */
+  .barra-pedido {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
+    z-index: 20;
+    max-width: 30rem;
+    margin: 0 auto;
+  }
+  .barra-pedido[hidden] { display: none; }
+  .barra-pedido button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font: inherit;
+    font-weight: 700;
+    padding: 0.9rem 1.25rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--luna);
+    color: #1C1840;
+    box-shadow: 0 10px 30px rgba(10, 8, 30, 0.35);
+    cursor: pointer;
+  }
+  .barra-pedido .total { font-family: "Syne", "Trebuchet MS", sans-serif; font-weight: 800; font-size: 1.15rem; }
+  body.con-pedido footer { padding-bottom: 7rem; }
+
+  /* Hoja del pedido */
+  .pedido {
+    width: min(32rem, 100%);
+    max-height: 90dvh;
+    padding: 0;
+    border: 1px solid var(--linea);
+    border-radius: 1.25rem;
+    background: var(--fondo);
+    color: var(--tinta);
+  }
+  .pedido::backdrop { background: rgba(10, 8, 30, 0.7); }
+  @media (max-width: 600px) {
+    .pedido { margin: auto 0 0; max-width: 100%; width: 100%; border-radius: 1.25rem 1.25rem 0 0; border-bottom: none; }
+  }
+  .pedido-interior { padding: 1.25rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 1.5rem); }
+  .pedido-cabecera { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .pedido h2, .pedido h3 { font-family: "Syne", "Trebuchet MS", sans-serif; margin: 0; }
+  .pedido h2 { font-size: 1.5rem; }
+  .pedido h3 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; }
+  .pedido-cerrar {
+    width: 2.5rem; height: 2.5rem; border: none; border-radius: 50%;
+    background: var(--superficie); color: var(--tinta); font-size: 1.5rem; line-height: 1; cursor: pointer;
+  }
+  .pedido-lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea); }
+  .pedido-linea {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.25rem 1rem;
+    align-items: center;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--linea);
+  }
+  .pedido-linea .nombre-linea { font-weight: 700; }
+  .pedido-linea .unitario { color: var(--tinta-suave); font-size: 0.85rem; }
+  .pedido-linea .unitario .ahorro { color: var(--hoja-color); font-weight: 600; }
+  .pedido-linea .control-pedido { grid-column: 1 / -1; justify-self: start; }
+  .pedido-linea .subtotal { font-family: "Syne", "Trebuchet MS", sans-serif; font-weight: 800; text-align: right; }
+  .pedido-total { display: flex; justify-content: space-between; align-items: baseline; padding-top: 0.9rem; }
+  .pedido-total strong { font-family: "Syne", "Trebuchet MS", sans-serif; font-size: 1.6rem; }
+  .pedido-vaciar { font: inherit; font-size: 0.85rem; border: none; background: none; color: var(--tinta-suave); text-decoration: underline; padding: 0.5rem 0; cursor: pointer; }
+
+  .datos-pago { margin: 0; padding: 0.25rem 1rem; border: 1px solid var(--linea); border-radius: 1rem; background: var(--superficie); }
+  .dato-pago { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.1rem 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--linea); }
+  .dato-pago:last-child { border-bottom: none; }
+  .dato-pago dt { grid-column: 1; color: var(--tinta-suave); font-size: 0.8rem; }
+  .dato-pago dd { grid-column: 1; margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .dato-pago button { grid-column: 2; grid-row: 1 / span 2; }
+  .btn-copiar {
+    font: inherit; font-size: 0.85rem; font-weight: 600;
+    min-height: 2.25rem; padding: 0.3rem 0.9rem;
+    border: 1px solid var(--linea); border-radius: 999px;
+    background: transparent; color: var(--tinta); cursor: pointer;
+  }
+  .instrucciones { color: var(--tinta-suave); font-size: 0.9rem; margin: 0.75rem 0; }
+  .btn-resumen {
+    width: 100%; font: inherit; font-weight: 700; padding: 0.85rem 1rem; margin-top: 0.25rem;
+    border: none; border-radius: 999px; background: var(--luna); color: #1C1840; cursor: pointer;
+  }
+  .pendiente { padding: 0.9rem 1rem; border: 1px dashed var(--acento); border-radius: 1rem; color: var(--tinta-suave); }
 
   .vacio { padding: 3rem 0; color: var(--tinta-suave); font-size: 1.1rem; }
   .vacio button {
@@ -449,6 +588,27 @@
   <p class="visor-nombre" id="visorNombre"></p>
 </dialog>
 
+<!-- Barra fija: aparece cuando hay algo en el pedido -->
+<div class="barra-pedido" id="barraPedido" hidden>
+  <button type="button" id="btnVerPedido">
+    <span id="barraTexto">Ver pedido</span>
+    <span class="total" id="barraTotal"></span>
+  </button>
+</div>
+
+<!-- Hoja del pedido con el método de pago -->
+<dialog class="pedido" id="pedido" aria-labelledby="tituloPedido">
+  <div class="pedido-interior">
+    <div class="pedido-cabecera">
+      <h2 id="tituloPedido">Tu pedido</h2>
+      <button type="button" class="pedido-cerrar" id="cerrarPedido" aria-label="Cerrar pedido">×</button>
+    </div>
+    <div id="contenidoPedido"></div>
+  </div>
+</dialog>
+
+<p class="sr-only" id="avisoPedido" aria-live="polite"></p>
+
 <footer class="contenedor">
   <p>Productos derivados de cáñamo con menos de 1% de THC. No son medicamentos ni sustituyen tratamiento médico.</p>
   <p>Venta solo a mayores de 18 años.</p>
@@ -493,7 +653,20 @@ const DATOS_PRUEBA = {
 };
 
 /* Cuando tengas el endpoint, pones aquí la URL de tu web app */
-const URL_APPS_SCRIPT = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnShnqFfP3_CGAMOSOdPJGDN3d3bEUMtMNQfHvxu-Px1OtOyCJniIogw4J9rPdOzE8ToDHyKtefPTIeX-qaqn7W2kE3K_H79rWTz4uIACJX-IcGtNcj4bux-L6UyNrzZVWIIW5VGwTZ3fbrTwhKHXFPXbjqM03bpR8sFJ2wNM3nkxO4Ed3wpPprf896leekslXHGQpw0p-N7gW1h1641BFU_nBsMecXQ3EDPBLLxxIT9eUKIYV9saF9dqSc9EpfB9FbqZxKW4P4yJXSqIAYHqVsrxG84qw&lib=M33AUP5ToNtVFJM3QgN4AR_4bj8KXYXPs";
+const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbyNdLGDHVzmR_rBmiI98RqtaEg5yWtshOa5DQ2U9R8HIvozQG-VlvUmSKnNSAJ3azC5kg/exec";
+/* =========================================================
+   DATOS DE PAGO (transferencia)
+   Llena los que apliquen; los que queden vacíos no se muestran.
+   ========================================================= */
+const DATOS_PAGO = {
+  banco: "",      // ej. "BBVA"
+  titular: "",    // nombre tal como aparece en la cuenta
+  clabe: "",      // 18 dígitos
+  cuenta: "",     // opcional: número de cuenta
+  tarjeta: "",    // opcional: 16 dígitos, para depósitos en tienda
+  instrucciones: "Haz tu transferencia por el total, copia el resumen de tu pedido y envíalo junto con tu comprobante."
+};
+
 
 // menu.json vive junto a este index.html en GitHub Pages; el Apps Script lo actualiza en cada cambio.
 // "no-cache" pregunta al servidor si cambió (respuesta rápida si no), así nunca se ve uno viejo.
@@ -561,6 +734,15 @@ function limpiarVariantes(lista, precioRespaldo) {
   return variantes;
 }
 
+// Fotos del repo: "img/x-400.webp" (menú) y "img/x-1200.webp" (visor).
+// Fotos viejas de Drive: se pide el tamaño con sz=w...
+function fotoChica(url) {
+  return url.replace(/sz=w\d+/, "sz=w300");
+}
+function fotoGrande(url) {
+  return url.replace(/sz=w\d+/, "sz=w1200").replace(/-400\.(webp|jpg)$/, "-1200.$1");
+}
+
 function normalizar(datos) {
   const categorias = (datos.categorias || [])
     .filter(c => c.id && esVerdadero(c.visible))
@@ -579,8 +761,8 @@ function normalizar(datos) {
         precio: variantes.length ? Math.min(...variantes.map(v => v.precio)) : null,
         calificacion: limpiarCalificacion(p.calificacion),
         resenas: Math.max(0, Math.round(aNumero(p.resenas) || 0)),
-        imagen: String(p.imagen || "").trim().replace(/sz=w\d+/, "sz=w300"),
-        imagenGrande: String(p.imagen || "").trim().replace(/sz=w\d+/, "sz=w1200"),
+        imagen: fotoChica(String(p.imagen || "").trim()),
+        imagenGrande: fotoGrande(String(p.imagen || "").trim()),
         disponible: esVerdadero(p.disponible),
         orden: Number(p.orden) || 0
       };
@@ -633,11 +815,14 @@ function htmlEscalones(v) {
   return `<p class="mayoreo">Por cantidad: ${partes.join(", ")}</p>`;
 }
 
-function htmlVariante(v) {
+function htmlVariante(p, v) {
   return `
     <li class="variante">
-      <span class="variante-nombre">${escapar(v.nombre)}</span>
-      <span class="precio">${formatoPrecio.format(v.precio)}</span>
+      <span class="variante-dato">
+        <span class="variante-nombre">${escapar(v.nombre)}</span>
+        <span class="precio">${formatoPrecio.format(v.precio)}</span>
+      </span>
+      ${htmlControl(p, v)}
       ${htmlEscalones(v)}
     </li>`;
 }
@@ -652,9 +837,10 @@ function htmlProducto(p) {
     precios = `<span class="aviso-agotado">Agotado</span>`;
   } else if (unSoloPrecio) {
     precios = `<span class="precio">${formatoPrecio.format(p.variantes[0].precio)}</span>`;
-    detalle = htmlEscalones(p.variantes[0]);
+    detalle = htmlEscalones(p.variantes[0]) +
+      `<div class="acciones-producto">${htmlControl(p, p.variantes[0])}</div>`;
   } else {
-    detalle = `<ul class="variantes">${p.variantes.map(htmlVariante).join("")}</ul>`;
+    detalle = `<ul class="variantes">${p.variantes.map(v => htmlVariante(p, v)).join("")}</ul>`;
   }
 
   return `
@@ -786,6 +972,260 @@ document.getElementById("menu").addEventListener("click", e => {
 visor.addEventListener("click", () => visor.close());
 
 /* =========================================================
+   PEDIDO (carrito)
+   Se guarda en este navegador: clave "idProducto|versión" -> cantidad.
+   Los precios NO se guardan: se calculan siempre con el menú actual.
+   ========================================================= */
+const CLAVE_PEDIDO = "pedido-v1";
+const MAX_CANTIDAD = 99;
+const pedido = new Map();
+
+try {
+  const guardado = JSON.parse(localStorage.getItem(CLAVE_PEDIDO) || "[]");
+  guardado.forEach(([clave, cantidad]) => {
+    if (typeof clave === "string" && cantidad > 0) pedido.set(clave, Math.min(MAX_CANTIDAD, Math.round(cantidad)));
+  });
+} catch (e) {}
+
+function guardarPedido() {
+  try { localStorage.setItem(CLAVE_PEDIDO, JSON.stringify([...pedido])); } catch (e) {}
+}
+
+function claveDe(p, v) {
+  return p.id + "|" + v.nombre;
+}
+
+function nombreLinea(p, v) {
+  return v.nombre ? p.nombre + " " + v.nombre : p.nombre;
+}
+
+// Precio por pieza según la cantidad (aplica los precios por cantidad)
+function precioUnitario(v, cantidad) {
+  let precio = v.precio;
+  v.escalones.forEach(e => {
+    if (cantidad >= e.desde) precio = Math.min(precio, e.precio);
+  });
+  return precio;
+}
+
+// Líneas válidas del pedido con sus precios. Quita lo que ya no existe o se agotó.
+function lineasPedido() {
+  if (!estado.datos) return [];
+  const lineas = [];
+  let cambio = false;
+
+  pedido.forEach((cantidad, clave) => {
+    const corte = clave.indexOf("|");
+    const id = clave.slice(0, corte);
+    const nombreVariante = clave.slice(corte + 1);
+    const p = estado.datos.productos.find(x => x.id === id);
+    const v = p && p.variantes.find(x => x.nombre === nombreVariante);
+
+    if (!p || !v || !p.disponible) {
+      pedido.delete(clave);
+      cambio = true;
+      return;
+    }
+    const unitario = precioUnitario(v, cantidad);
+    lineas.push({ clave, p, v, cantidad, unitario, subtotal: unitario * cantidad });
+  });
+
+  if (cambio) guardarPedido();
+  return lineas;
+}
+
+function interiorControl(cantidad, nombre) {
+  const n = escapar(nombre);
+  if (cantidad === 0) {
+    return `<button type="button" class="btn-agregar" data-accion="mas" aria-label="Agregar ${n} al pedido">Agregar</button>`;
+  }
+  return `
+    <div class="contador">
+      <button type="button" data-accion="menos" aria-label="Quitar uno de ${n}">−</button>
+      <span>${cantidad}</span>
+      <button type="button" data-accion="mas" aria-label="Agregar otro ${n}">+</button>
+    </div>`;
+}
+
+function htmlControl(p, v) {
+  const clave = claveDe(p, v);
+  const nombre = nombreLinea(p, v);
+  return `<div class="control-pedido" data-clave="${escapar(clave)}" data-nombre="${escapar(nombre)}">${interiorControl(pedido.get(clave) || 0, nombre)}</div>`;
+}
+
+function cambiarCantidad(clave, delta) {
+  const actual = pedido.get(clave) || 0;
+  const nueva = Math.max(0, Math.min(MAX_CANTIDAD, actual + delta));
+  if (nueva === actual) return;
+
+  if (nueva === 0) pedido.delete(clave);
+  else pedido.set(clave, nueva);
+  guardarPedido();
+
+  // Solo se actualizan los controles de esa línea (no se repinta todo el menú)
+  document.querySelectorAll(`.control-pedido[data-clave="${CSS.escape(clave)}"]`).forEach(control => {
+    control.innerHTML = interiorControl(nueva, control.dataset.nombre);
+  });
+
+  const control = document.querySelector(`.control-pedido[data-clave="${CSS.escape(clave)}"]`);
+  const nombre = control ? control.dataset.nombre : "Producto";
+  document.getElementById("avisoPedido").textContent =
+    nueva === 0 ? nombre + " se quitó del pedido" : nombre + ": " + nueva + " en el pedido";
+
+  actualizarBarra();
+  if (document.getElementById("pedido").open) pintarPedido();
+}
+
+function actualizarBarra() {
+  const lineas = lineasPedido();
+  const piezas = lineas.reduce((suma, l) => suma + l.cantidad, 0);
+  const total = lineas.reduce((suma, l) => suma + l.subtotal, 0);
+
+  document.getElementById("barraPedido").hidden = piezas === 0;
+  document.body.classList.toggle("con-pedido", piezas > 0);
+  document.getElementById("barraTexto").textContent =
+    "Ver pedido (" + piezas + (piezas === 1 ? " pieza)" : " piezas)");
+  document.getElementById("barraTotal").textContent = formatoPrecio.format(total);
+}
+
+function textoResumen(lineas, total) {
+  const renglones = lineas.map(l =>
+    `${l.cantidad} x ${nombreLinea(l.p, l.v)} (${formatoPrecio.format(l.unitario)} c/u) = ${formatoPrecio.format(l.subtotal)}`
+  );
+  return ["Pedido JuZza", ...renglones, "Total: " + formatoPrecio.format(total)].join("\n");
+}
+
+// CLABE y tarjeta se muestran en bloques de 4 para leerlas fácil; se copian sin espacios
+function enBloques(numero) {
+  return String(numero).replace(/\s+/g, "").replace(/(.{4})(?=.)/g, "$1 ");
+}
+
+function htmlDatosPago() {
+  const filas = [
+    ["Banco", DATOS_PAGO.banco, false],
+    ["Titular", DATOS_PAGO.titular, true],
+    ["CLABE", DATOS_PAGO.clabe, true],
+    ["Cuenta", DATOS_PAGO.cuenta, true],
+    ["Tarjeta", DATOS_PAGO.tarjeta, true]
+  ].filter(([, valor]) => String(valor || "").trim() !== "");
+
+  if (filas.length === 0) {
+    return `<p class="pendiente">Los datos para transferencia todavía no están configurados.</p>`;
+  }
+
+  return `
+    <dl class="datos-pago">
+      ${filas.map(([etiqueta, valor, copiable]) => {
+        const limpio = String(valor).trim();
+        const numerico = /^[\d\s]+$/.test(limpio);
+        const mostrar = numerico ? enBloques(limpio) : limpio;
+        const copiar = numerico ? limpio.replace(/\s+/g, "") : limpio;
+        return `
+          <div class="dato-pago">
+            <dt>${etiqueta}</dt>
+            <dd>${escapar(mostrar)}</dd>
+            ${copiable ? `<button type="button" class="btn-copiar" data-copiar="${escapar(copiar)}" aria-label="Copiar ${etiqueta}">Copiar</button>` : ""}
+          </div>`;
+      }).join("")}
+    </dl>`;
+}
+
+function pintarPedido() {
+  const contenedor = document.getElementById("contenidoPedido");
+  const lineas = lineasPedido();
+
+  if (lineas.length === 0) {
+    contenedor.innerHTML = `<p class="instrucciones">Tu pedido está vacío. Toca "Agregar" en los productos que quieras.</p>`;
+    return;
+  }
+
+  const total = lineas.reduce((suma, l) => suma + l.subtotal, 0);
+
+  contenedor.innerHTML = `
+    <ul class="pedido-lista">
+      ${lineas.map(l => {
+        const conDescuento = l.unitario < l.v.precio;
+        return `
+          <li class="pedido-linea">
+            <div>
+              <div class="nombre-linea">${escapar(nombreLinea(l.p, l.v))}</div>
+              <div class="unitario">
+                ${formatoPrecio.format(l.unitario)} c/u
+                ${conDescuento ? `<span class="ahorro">precio por cantidad</span>` : ""}
+              </div>
+            </div>
+            <div class="subtotal">${formatoPrecio.format(l.subtotal)}</div>
+            ${htmlControl(l.p, l.v)}
+          </li>`;
+      }).join("")}
+    </ul>
+    <div class="pedido-total"><span>Total</span><strong>${formatoPrecio.format(total)}</strong></div>
+    <button type="button" class="pedido-vaciar" id="vaciarPedido">Vaciar pedido</button>
+
+    <h3>Método de pago: transferencia</h3>
+    ${htmlDatosPago()}
+    <p class="instrucciones">${escapar(DATOS_PAGO.instrucciones || "")}</p>
+    <button type="button" class="btn-resumen" data-copiar="${escapar(textoResumen(lineas, total))}">Copiar resumen del pedido</button>`;
+}
+
+// Copia al portapapeles y avisa en el mismo botón
+async function copiar(texto, boton) {
+  const original = boton.textContent;
+  try {
+    await navigator.clipboard.writeText(texto);
+    boton.textContent = "Copiado";
+  } catch (e) {
+    // Respaldo para navegadores que no dejan usar el portapapeles
+    const area = document.createElement("textarea");
+    area.value = texto;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.append(area);
+    area.select();
+    const ok = document.execCommand("copy");
+    area.remove();
+    boton.textContent = ok ? "Copiado" : "No se pudo copiar";
+  }
+  setTimeout(() => { boton.textContent = original; }, 1600);
+}
+
+// + / − y "Agregar", tanto en el menú como dentro del pedido
+function alTocarControl(e) {
+  const boton = e.target.closest("[data-accion]");
+  if (!boton) return;
+  const control = boton.closest(".control-pedido");
+  if (!control) return;
+  cambiarCantidad(control.dataset.clave, boton.dataset.accion === "mas" ? 1 : -1);
+}
+
+document.getElementById("menu").addEventListener("click", alTocarControl);
+
+const dialogoPedido = document.getElementById("pedido");
+dialogoPedido.addEventListener("click", e => {
+  if (e.target === dialogoPedido) { dialogoPedido.close(); return; }   // tocar fuera de la hoja
+  const copiable = e.target.closest("[data-copiar]");
+  if (copiable) { copiar(copiable.dataset.copiar, copiable); return; }
+  if (e.target.id === "vaciarPedido") {
+    if (confirm("¿Vaciar todo el pedido?")) {
+      pedido.clear();
+      guardarPedido();
+      render();
+      actualizarBarra();
+      pintarPedido();
+    }
+    return;
+  }
+  alTocarControl(e);
+});
+
+document.getElementById("cerrarPedido").addEventListener("click", () => dialogoPedido.close());
+document.getElementById("btnVerPedido").addEventListener("click", () => {
+  pintarPedido();
+  dialogoPedido.showModal();
+});
+
+/* =========================================================
    ARRANQUE
    ========================================================= */
 const CLAVE_CACHE = "menu-cache-v1";
@@ -800,6 +1240,7 @@ async function iniciar() {
       estado.datos = normalizar(JSON.parse(guardado));
       renderChips();
       render();
+      actualizarBarra();
       yaSePinto = true;
     }
   } catch (e) {
@@ -813,6 +1254,7 @@ async function iniciar() {
     try { localStorage.setItem(CLAVE_CACHE, JSON.stringify(crudos)); } catch (e) {}
     renderChips();
     render();
+    actualizarBarra();
   } catch (error) {
     console.error(error);
     if (!yaSePinto) {
